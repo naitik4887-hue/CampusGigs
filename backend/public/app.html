@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CampusGigs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/base.css" />
+  <link rel="stylesheet" href="/app.css" />
+</head>
+<body>
+  <a class="skip" href="#app">Skip to content</a>
+
+  <header class="topbar">
+    <a class="brand" href="#/services">CampusGigs</a>
+
+    <nav class="tabs" aria-label="Sections">
+      <a href="#/services" data-tab="services">Services</a>
+      <a href="#/market" data-tab="market">Marketplace</a>
+    </nav>
+
+    <form class="search" id="searchForm" role="search">
+      <input id="searchInput" type="search" placeholder="Search tutoring, design, coding…" aria-label="Search" autocomplete="off" />
+    </form>
+
+    <div class="nav">
+      <a class="btn btn-primary btn-sm" id="postBtn" href="#/new/service">Post a service</a>
+      <a class="nav-link" href="#/inbox">Messages<span class="badge" id="unreadBadge" hidden></span></a>
+      <div class="menu">
+        <button type="button" class="avatar" id="menuBtn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu"></button>
+        <div class="menu-pop" id="menuPop" hidden>
+          <div class="menu-user"><b id="menuName"></b><span id="menuUni"></span></div>
+          <a href="#/mine">My listings</a>
+          <a href="#/verify" id="menuVerify">Verify college ID</a>
+          <a href="#/admin" id="menuAdmin" hidden>Review ID requests</a>
+          <a href="/">Home page</a>
+          <button type="button" id="logoutBtn">Log out</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+  <a class="fab" id="fab" href="#/new/service" aria-label="Post a listing">+</a>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

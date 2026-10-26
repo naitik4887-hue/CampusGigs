@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Log in · CampusGigs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #14213d;
+      --ink-soft: #5c667a;
+      --paper: #eef1f6;
+      --white: #ffffff;
+      --accent: #3b5bdb;
+      --accent-dark: #2f49b3;
+      --line: #d5dbe6;
+      --danger: #c92a2a;
+      --ok: #2b8a3e;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+    }
+
+    .shell { min-height: 100%; display: grid; grid-template-columns: minmax(280px, 5fr) 7fr; }
+
+    .aside {
+      background: var(--ink);
+      color: #e8ecf5;
+      padding: 56px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .aside-brand { color: #fff; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.03em; text-decoration: none; }
+    .aside-brand:hover { text-decoration: underline; }
+    .back-home { display: inline-block; margin-bottom: 22px; color: var(--ink-soft); font-weight: 600; font-size: 0.92rem; text-decoration: none; }
+    .back-home:hover { color: var(--accent); }
+    .aside h1 { font-size: 2.4rem; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 16px; font-weight: 700; }
+    .aside p { margin: 0; max-width: 34ch; color: #aab4cb; }
+    .aside small { color: #7f8aa5; }
+
+    .main { display: flex; align-items: center; justify-content: center; padding: 32px 20px; }
+    .card { width: 100%; max-width: 400px; }
+
+    h2 { font-size: 1.6rem; letter-spacing: -0.01em; margin: 0 0 6px; }
+    .sub { color: var(--ink-soft); margin: 0 0 24px; }
+
+    label { display: block; font-weight: 600; font-size: 0.9rem; margin: 0 0 6px; }
+    .field { margin-bottom: 16px; }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      font: inherit;
+      color: var(--ink);
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+    }
+    input:focus-visible, button:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(59, 91, 219, 0.35);
+      outline-offset: 1px;
+      border-color: var(--accent);
+    }
+
+    .pw-wrap { position: relative; }
+    .pw-wrap input { padding-right: 64px; }
+    .pw-toggle {
+      position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+      background: none; border: 0; color: var(--accent); font: inherit; font-size: 0.85rem; font-weight: 600;
+      padding: 6px 8px; cursor: pointer; border-radius: 6px;
+    }
+
+    .btn {
+      width: 100%; padding: 13px 16px; font: inherit; font-weight: 600; color: #fff;
+      background: var(--accent); border: 0; border-radius: var(--radius); cursor: pointer;
+    }
+    .btn:hover { background: var(--accent-dark); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .link {
+      background: none; border: 0; padding: 0; font: inherit; color: var(--accent);
+      font-weight: 600; cursor: pointer; text-decoration: none;
+    }
+    .link:hover { text-decoration: underline; }
+    .link:disabled { color: var(--ink-soft); cursor: default; text-decoration: none; }
+
+    .row { display: flex; justify-content: space-between; align-items: center; margin: -4px 0 20px; font-size: 0.9rem; }
+    .foot { margin-top: 20px; text-align: center; color: var(--ink-soft); font-size: 0.95rem; }
+
+    .msg { min-height: 1.4em; margin: 0 0 14px; font-size: 0.92rem; }
+    .msg.error { color: var(--danger); }
+    .msg.ok { color: var(--ok); }
+
+    .hint { color: var(--ink-soft); font-size: 0.82rem; margin-top: 6px; }
+
+    /* OTP boxes */
+    .otp { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 20px; }
+    .otp input {
+      width: 100%; aspect-ratio: 1 / 1.15; text-align: center; font: inherit; font-size: 1.5rem; font-weight: 700;
+      color: var(--ink); background: var(--white); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 0;
+    }
+    .otp input:focus-visible { outline: 3px solid rgba(59, 91, 219, 0.35); border-color: var(--accent); }
+    .otp.shake { animation: shake 0.35s; }
+    @keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+    /* Views */
+    [data-view] { display: none; }
+    [data-view].active { display: block; }
+
+    .profile { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; margin-bottom: 20px; }
+    .profile b { display: block; font-size: 1.1rem; }
+    .profile span { color: var(--ink-soft); }
+
+    @media (max-width: 820px) {
+      .shell { grid-template-columns: 1fr; }
+      .aside { padding: 28px 24px; }
+      .aside h1 { font-size: 1.6rem; }
+      .aside small { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .otp.shake { animation: none; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="aside">
+      <a class="aside-brand" href="/">CampusGigs</a>
+      <div>
+        <h1>Services by students, for students.</h1>
+        <p>Hire students for their skills, or buy and sell things on campus. Sign up with your university email to get in.</p>
+      </div>
+      <small>University email required. Codes expire after 10 minutes.</small>
+    </aside>
+
+    <main class="main">
+      <div class="card">
+        <a class="back-home" href="/">Back to home</a>
+
+        <!-- LOGIN -->
+        <section data-view="login">
+          <h2>Log in</h2>
+          <p class="sub">Welcome back.</p>
+          <form id="loginForm" novalidate>
+            <div class="field">
+              <label for="loginEmail">Email</label>
+              <input id="loginEmail" type="email" autocomplete="email" required />
+            </div>
+            <div class="field">
+              <label for="loginPassword">Password</label>
+              <div class="pw-wrap">
+                <input id="loginPassword" type="password" autocomplete="current-password" required />
+                <button type="button" class="pw-toggle" data-toggle="loginPassword">Show</button>
+              </div>
+            </div>
+            <div class="row"><span></span><button type="button" class="link" data-go="forgot">Forgot password?</button></div>
+            <p class="msg" role="alert" aria-live="polite"></p>
+            <button class="btn" type="submit">Log in</button>
+          </form>
+          <p class="foot">New here? <button class="link" data-go="signup">Create an account</button></p>
+        </section>
+
+        <!-- SIGNUP -->
+        <section data-view="signup">
+          <h2>Create your account</h2>
+          <p class="sub">We'll email you a code to confirm your address.</p>
+          <form id="signupForm" novalidate>
+            <div class="field">
+              <label for="signupName">Full name</label>
+              <input id="signupName" type="text" autocomplete="name" required />
+            </div>
+            <div class="field">
+              <label for="signupEmail">University email</label>
+              <input id="signupEmail" type="email" autocomplete="email" required />
+              <div class="hint">Use your university email, like name@yourcollege.ac.in.</div>
+            </div>
+            <div class="field">
+              <label for="signupPassword">Password</label>
+              <div class="pw-wrap">
+                <input id="signupPassword" type="password" autocomplete="new-password" required />
+                <button type="button" class="pw-toggle" data-toggle="signupPassword">Show</button>
+              </div>
+              <div class="hint">At least 8 characters, with a letter and a number.</div>
+            </div>
+            <p class="msg" role="alert" aria-live="polite"></p>
+            <button class="btn" type="submit">Create account</button>
+          </form>
+          <p class="foot">Already registered? <button class="link" data-go="login">Log in</button></p>
+        </section>
+
+        <!-- FORGOT -->
+        <section data-view="forgot">
+          <h2>Forgot your password?</h2>
+          <p class="sub">Enter your email and we'll send a code to reset it.</p>
+          <form id="forgotForm" novalidate>
+            <div class="field">
+              <label for="forgotEmail">Email</label>
+              <input id="forgotEmail" type="email" autocomplete="email" required />
+            </div>
+            <p class="msg" role="alert" aria-live="polite"></p>
+            <button class="btn" type="submit">Send code</button>
+          </form>
+          <p class="foot"><button class="link" data-go="login">Back to log in</button></p>
+        </section>
+
+        <!-- OTP (used for both email verification and password reset) -->
+        <section data-view="otp">
+          <h2 id="otpTitle">Check your email</h2>
+          <p class="sub" id="otpSub"></p>
+          <form id="otpForm" novalidate>
+            <div class="otp" id="otpBoxes" role="group" aria-label="6-digit code"></div>
+            <div class="field" id="newPwField" hidden>
+              <label for="newPassword">New password</label>
+              <div class="pw-wrap">
+                <input id="newPassword" type="password" autocomplete="new-password" />
+                <button type="button" class="pw-toggle" data-toggle="newPassword">Show</button>
+              </div>
+              <div class="hint">At least 8 characters, with a letter and a number.</div>
+            </div>
+            <p class="msg" role="alert" aria-live="polite"></p>
+            <button class="btn" type="submit" id="otpSubmit">Verify email</button>
+          </form>
+          <p class="foot">
+            Didn't get it? <button class="link" id="resendBtn" type="button">Resend code</button>
+            <br /><button class="link" data-go="login" style="margin-top:10px">Back to log in</button>
+          </p>
+        </section>
+
+
+      </div>
+    </main>
+  </div>
+
+<script>
+  /* ---------- tiny helpers ---------- */
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  async function api(path, { method = 'POST', body } = {}) {
+    const res = await fetch('/api/auth' + path, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const err = new Error(data.message || 'Something went wrong. Please try again.');
+      err.status = res.status;
+      err.data = data;
+      throw err;
+    }
+    return data;
+  }
+
+  function setMsg(view, text, type = 'error') {
+    const el = $('.msg', $(`[data-view="${view}"]`));
+    el.textContent = text || '';
+    el.className = 'msg ' + (text ? type : '');
+  }
+
+  async function withBusy(button, fn) {
+    const label = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Please wait…';
+    try { return await fn(); }
+    finally { button.disabled = false; button.textContent = label; }
+  }
+
+  let currentView = 'login';
+  function show(name) {
+    currentView = name;
+    $$('[data-view]').forEach((s) => s.classList.toggle('active', s.dataset.view === name));
+    $$('.msg').forEach((m) => { m.textContent = ''; m.className = 'msg'; });
+    const first = $(`[data-view="${name}"] input:not([type=hidden])`);
+    if (first && name !== 'otp') first.focus();
+  }
+
+  /* ---------- navigation + password toggle ---------- */
+  document.addEventListener('click', (e) => {
+    const go = e.target.closest('[data-go]');
+    if (go) { e.preventDefault(); show(go.dataset.go); }
+
+    const tg = e.target.closest('[data-toggle]');
+    if (tg) {
+      const input = $('#' + tg.dataset.toggle);
+      const hidden = input.type === 'password';
+      input.type = hidden ? 'text' : 'password';
+      tg.textContent = hidden ? 'Hide' : 'Show';
+    }
+  });
+
+  /* ---------- OTP boxes ---------- */
+  const otpWrap = $('#otpBoxes');
+  for (let i = 0; i < 6; i++) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.inputMode = 'numeric';
+    input.maxLength = 1;
+    input.autocomplete = i === 0 ? 'one-time-code' : 'off';
+    input.setAttribute('aria-label', `Digit ${i + 1}`);
+    otpWrap.appendChild(input);
+  }
+  const otpInputs = $$('input', otpWrap);
+  const getOtp = () => otpInputs.map((i) => i.value).join('');
+  const clearOtp = () => { otpInputs.forEach((i) => (i.value = '')); otpInputs[0].focus(); };
+
+  otpInputs.forEach((input, idx) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/\D/g, '').slice(-1);
+      if (input.value && idx < 5) otpInputs[idx + 1].focus();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && idx > 0) otpInputs[idx - 1].focus();
+      if (e.key === 'ArrowLeft' && idx > 0) otpInputs[idx - 1].focus();
+      if (e.key === 'ArrowRight' && idx < 5) otpInputs[idx + 1].focus();
+    });
+    input.addEventListener('paste', (e) => {
+      const text = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6);
+      if (!text) return;
+      e.preventDefault();
+      text.split('').forEach((ch, i) => (otpInputs[i].value = ch));
+      otpInputs[Math.min(text.length, 5)].focus();
+    });
+  });
+
+  /* ---------- OTP flow state ---------- */
+  let pending = { email: '', purpose: 'verify' };
+  let cooldownTimer = null;
+
+  function openOtp(email, purpose, note) {
+    pending = { email, purpose };
+    const reset = purpose === 'reset';
+    $('#otpTitle').textContent = reset ? 'Reset your password' : 'Check your email';
+    $('#otpSub').textContent = `Enter the 6-digit code we sent to ${email}.`;
+    $('#newPwField').hidden = !reset;
+    $('#newPassword').value = '';
+    $('#otpSubmit').textContent = reset ? 'Update password' : 'Verify email';
+    show('otp');
+    clearOtp();
+    if (note) setMsg('otp', note, 'ok');
+    startCooldown(60);
+  }
+
+  function startCooldown(seconds) {
+    const btn = $('#resendBtn');
+    clearInterval(cooldownTimer);
+    let left = seconds;
+    const tick = () => {
+      btn.disabled = left > 0;
+      btn.textContent = left > 0 ? `Resend code in ${left}s` : 'Resend code';
+      if (left-- <= 0) clearInterval(cooldownTimer);
+    };
+    tick();
+    cooldownTimer = setInterval(tick, 1000);
+  }
+
+  $('#resendBtn').addEventListener('click', async () => {
+    try {
+      await api('/resend-otp', { body: { email: pending.email, purpose: pending.purpose } });
+      setMsg('otp', 'A new code is on its way.', 'ok');
+      startCooldown(60);
+    } catch (err) {
+      setMsg('otp', err.message);
+      if (err.data && err.data.retryAfter) startCooldown(err.data.retryAfter);
+    }
+  });
+
+  /* ---------- forms ---------- */
+  $('#signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setMsg('signup', '');
+    const body = {
+      name: $('#signupName').value,
+      email: $('#signupEmail').value,
+      password: $('#signupPassword').value,
+    };
+    try {
+      const data = await withBusy($('button[type=submit]', e.target), () => api('/signup', { body }));
+      openOtp(data.email, 'verify', data.message);
+    } catch (err) { setMsg('signup', err.message); }
+  });
+
+  $('#loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setMsg('login', '');
+    const email = $('#loginEmail').value;
+    try {
+      const data = await withBusy($('button[type=submit]', e.target), () =>
+        api('/login', { body: { email, password: $('#loginPassword').value } })
+      );
+      showHome(data.user);
+    } catch (err) {
+      if (err.data && err.data.needsVerification) openOtp(err.data.email, 'verify', err.message);
+      else setMsg('login', err.message);
+    }
+  });
+
+  $('#forgotForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setMsg('forgot', '');
+    try {
+      const data = await withBusy($('button[type=submit]', e.target), () =>
+        api('/forgot-password', { body: { email: $('#forgotEmail').value } })
+      );
+      openOtp(data.email, 'reset', data.message);
+    } catch (err) { setMsg('forgot', err.message); }
+  });
+
+  $('#otpForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setMsg('otp', '');
+    const otp = getOtp();
+    if (otp.length !== 6) return setMsg('otp', 'Enter all 6 digits.');
+    const btn = $('#otpSubmit');
+    try {
+      if (pending.purpose === 'verify') {
+        const data = await withBusy(btn, () => api('/verify-otp', { body: { email: pending.email, otp } }));
+        showHome(data.user);
+      } else {
+        const data = await withBusy(btn, () =>
+          api('/reset-password', { body: { email: pending.email, otp, newPassword: $('#newPassword').value } })
+        );
+        show('login');
+        $('#loginEmail').value = pending.email;
+        setMsg('login', data.message, 'ok');
+      }
+    } catch (err) {
+      setMsg('otp', err.message);
+      otpWrap.classList.remove('shake'); void otpWrap.offsetWidth; otpWrap.classList.add('shake');
+    }
+  });
+
+  /* ---------- session ---------- */
+  function showHome() {
+    location.href = '/app.html';
+  }
+
+  (async function init() {
+    try {
+      const { user } = await api('/me', { method: 'GET' });
+      showHome(user);
+    } catch { show(new URLSearchParams(location.search).get('mode') === 'signup' ? 'signup' : 'login'); }
+  })();
+</script>
+</body>
+</html>

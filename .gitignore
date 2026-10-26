@@ -1,0 +1,30 @@
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Local databases
+**/data.db
+**/data.db-shm
+**/data.db-wal
+
+# Local storage and private test images
+**/storage/
+**/test-id.jpg
+
+# Unnecessary archives and duplicate project
+/files (1).zip
+/files (2).zip
+/campusgigs-updated 1/
+
+# Build output
+dist/
+build/
